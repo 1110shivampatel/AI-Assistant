@@ -93,15 +93,35 @@ class SafetyPolicy:
         Returns:
             (allowed: bool, reason: Optional[str])
         """
+        import re
+        # Strip punctuation and filler words (same as AppLauncher.resolve_app)
+        name_clean = re.sub(r'[.,!?;:\'"]+', '', app_name).strip()
+        filler_words = {"the", "a", "an", "my", "this", "that", "please", "open", "launch", "start"}
+        words = [w for w in name_clean.lower().split() if w not in filler_words]
+        name_lower = " ".join(words) if words else name_clean.lower()
+
         apps = app_registry.get("apps", {})
         # Check by key
-        if app_name.lower() in apps:
+        if name_lower in apps:
             return True, None
         # Check by alias
         for key, info in apps.items():
-            if app_name.lower() in [a.lower() for a in info.get("aliases", [])]:
+            aliases = [a.lower() for a in info.get("aliases", [])]
+            if name_lower in aliases:
                 return True, None
-        logger.warning(f"App not in registry: {app_name}")
+        # Fuzzy substring match
+        for key, info in apps.items():
+            aliases = [a.lower() for a in info.get("aliases", [])]
+            if any(name_lower in a or a in name_lower for a in aliases):
+                return True, None
+        # Single-word match
+        for word in name_lower.split():
+            for key, info in apps.items():
+                aliases = [a.lower() for a in info.get("aliases", [])]
+                if word in aliases or word == key:
+                    return True, None
+
+        logger.warning(f"App not in registry: {app_name} (cleaned: {name_lower})")
         return False, f"App '{app_name}' is not in the allowed app registry"
 
     def validate_chrome_profile(
@@ -130,7 +150,7 @@ class SafetyPolicy:
         # Known safe intents
         safe_intents = {
             "open_app", "search_file", "open_file", "chrome_search",
-            "start_work_mode", "chat", "greeting", "help", "time",
+            "start_work_mode", "sleep", "chat", "greeting", "help", "time",
             "weather_local", "list_files", "unknown",
         }
         if intent_type in safe_intents:

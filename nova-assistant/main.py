@@ -30,6 +30,21 @@ if sys.platform == "win32":
     except Exception:
         pass  # Non-critical — use existing PATH
 
+    # Add NVIDIA pip packages to PATH for CUDA 12 support in CTranslate2
+    try:
+        import glob
+        import site
+        site_packages = site.getsitepackages()
+        for sp in site_packages:
+            nvidia_bins = glob.glob(os.path.join(sp, "nvidia", "*", "bin"))
+            if nvidia_bins:
+                os.environ["PATH"] = ";".join(nvidia_bins) + ";" + os.environ["PATH"]
+                # Also add to Python's DLL search path
+                for path in nvidia_bins:
+                    os.add_dll_directory(path)
+    except Exception:
+        pass
+
 # Ensure project root is on sys.path
 PROJECT_ROOT = Path(__file__).parent.resolve()
 if str(PROJECT_ROOT) not in sys.path:

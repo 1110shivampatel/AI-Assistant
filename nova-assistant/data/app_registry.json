@@ -3,7 +3,7 @@
     "chrome": {
       "name": "Google Chrome",
       "executable": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
-      "aliases": ["chrome", "google chrome", "browser", "google"]
+      "aliases": ["chrome", "google chrome", "browser", "google", "crove", "grove", "crome", "krome"]
     },
     "cursor": {
       "name": "Cursor",
@@ -18,7 +18,7 @@
     "notepad": {
       "name": "Notepad",
       "executable": "notepad.exe",
-      "aliases": ["notepad", "text editor", "note"]
+      "aliases": ["notepad", "text editor", "note", "notes", "north", "nope"]
     },
     "calculator": {
       "name": "Calculator",
@@ -44,6 +44,21 @@
       "name": "Task Manager",
       "executable": "taskmgr.exe",
       "aliases": ["task manager", "taskmgr", "processes"]
+    },
+    "calendar": {
+      "name": "Windows Calendar",
+      "executable": "outlookcal:",
+      "aliases": ["calendar", "calender", "agenda", "schedule"]
+    },
+    "sticky_notes": {
+      "name": "Sticky Notes",
+      "executable": "ms-stickynotes:",
+      "aliases": ["sticky notes", "stickies", "sticky"]
+    },
+    "snipping_tool": {
+      "name": "Snipping Tool",
+      "executable": "ms-screenclip:",
+      "aliases": ["snipping tool", "screenshot", "snip", "screen capture"]
     }
   }
 }
