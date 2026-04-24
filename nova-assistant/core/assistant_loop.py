@@ -250,6 +250,7 @@ class AssistantLoop:
             with open(ws_path, "r") as f:
                 ws_data = json.load(f)
         except Exception as e:
+            logger.error(f"Failed to load workspaces config: {e}")
             return f"Failed to load workspaces config: {e}"
 
         workspaces = ws_data.get("workspaces", {})

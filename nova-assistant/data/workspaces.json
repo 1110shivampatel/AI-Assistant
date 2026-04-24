@@ -27,35 +27,35 @@
         {
           "type": "chrome_profile",
           "profile": "shivam",
-          "urls": ["https://youtube.com]
-          }
-        ],
-        "music": {
-          "enabled": true,
-          "url": "https://youtu.be/wLoWd2KyUro?si=IflKRO7tJJSR2OLg",
-          "profile": "shivam"
+          "urls": ["https://youtube.com"]
         }
-      },
-      "study": {
-        "name": "Study Mode",
-        "description": "ASU study setup",
-        "create_virtual_desktop": true,
-        "apps": [
-          {
-            "type": "chrome_profile",
-            "profile": "asu",
-            "urls": []
-          },
-          {
-            "type": "app",
-            "app": "cursor"
-          }
-        ],
-        "music": {
-          "enabled": false,
-          "url": "",
-          "profile": "shivam"
+      ],
+      "music": {
+        "enabled": true,
+        "url": "https://youtu.be/wLoWd2KyUro?si=IflKRO7tJJSR2OLg",
+        "profile": "shivam"
+      }
+    },
+    "study": {
+      "name": "Study Mode",
+      "description": "ASU study setup",
+      "create_virtual_desktop": true,
+      "apps": [
+        {
+          "type": "chrome_profile",
+          "profile": "asu",
+          "urls": []
+        },
+        {
+          "type": "app",
+          "app": "cursor"
         }
+      ],
+      "music": {
+        "enabled": false,
+        "url": "",
+        "profile": "shivam"
       }
     }
   }
+}
