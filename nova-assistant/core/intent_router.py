@@ -83,6 +83,7 @@ RULES:
 1. Your output MUST be valid JSON matching the provided schema. Do not wrap it in markdown code blocks.
 2. When in doubt, use 'chat' or 'unknown' — NEVER guess 'start_work_mode' or 'open_app' unless the user clearly asks for it.
 3. If the command sounds like background noise or gibberish, classify as 'unknown'.
+4. You will be provided with recent conversation history. Use this context if the user's command refers to something said recently (e.g. "open it", "what did you say").
 """
 
     def __init__(self, config: dict):
@@ -95,6 +96,10 @@ RULES:
         
         # Initialize Ollama client
         self._client = Client(host=self._host)
+        
+        # Local session memory
+        self._history = []
+        self._max_history = 6  # Keep last 6 messages (3 interactions)
         
         logger.info(f"Intent router initialized using model '{self._model}' at {self._host}")
         
@@ -194,13 +199,19 @@ RULES:
         return None
 
     def _llm_parse(self, command: str) -> Dict[str, Any]:
-        """Call Ollama to parse the intent using JSON mode."""
+        """Call Ollama to parse the intent using JSON mode and conversation history."""
+        messages = [{"role": "system", "content": self.SYSTEM_PROMPT}]
+        
+        # Add conversation history
+        for msg in self._history:
+            messages.append(msg)
+            
+        # Add current command
+        messages.append({"role": "user", "content": command})
+        
         response = self._client.chat(
             model=self._model,
-            messages=[
-                {"role": "system", "content": self.SYSTEM_PROMPT},
-                {"role": "user", "content": command}
-            ],
+            messages=messages,
             format=self.INTENT_SCHEMA,
             options={
                 "temperature": 0.1,  # Keep it deterministic
@@ -222,6 +233,14 @@ RULES:
             
             # Sanity check: prevent high-impact intents from LLM hallucination
             intent = self._sanity_check_llm_intent(command, intent)
+                
+            # Update local session memory
+            self._history.append({"role": "user", "content": command})
+            self._history.append({"role": "assistant", "content": json.dumps(intent)})
+            
+            # Prune history if it exceeds max length
+            if len(self._history) > self._max_history:
+                self._history = self._history[-self._max_history:]
                 
             return intent
         except json.JSONDecodeError:

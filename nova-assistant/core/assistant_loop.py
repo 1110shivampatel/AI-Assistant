@@ -215,6 +215,27 @@ class AssistantLoop:
         command_text = self._stt.listen_for_command()
 
         if command_text:
+            current_time = time.time()
+            
+            # Command debouncing
+            last_time = getattr(self, '_last_command_time', 0)
+            last_text = getattr(self, '_last_command_text', "")
+            
+            # Ignore exact same command if it happens within 5 seconds (prevent bounce)
+            if command_text == last_text and (current_time - last_time) < 5.0:
+                logger.info(f"Duplicate command ignored (debounced): '{command_text}'")
+                self._state = self.STATE_IDLE
+                return
+                
+            # Enforce general cooldown between commands
+            if (current_time - last_time) < self._command_cooldown:
+                logger.info("Command ignored (general cooldown active)")
+                self._state = self.STATE_IDLE
+                return
+
+            self._last_command_time = current_time
+            self._last_command_text = command_text
+
             logger.info(f"Command received: '{command_text}'")
             self._current_command = command_text
             self._state = self.STATE_PROCESSING
