@@ -111,6 +111,51 @@ class AssistantLoop:
             logger.error(f"Failed to initialize File Tools: {e}")
             raise
 
+        # Phase 4 Tools
+        try:
+            from system.virtual_desktop import VirtualDesktopManager
+            self._desktop_manager = VirtualDesktopManager()
+        except Exception as e:
+            logger.error(f"Failed to initialize Virtual Desktop Manager: {e}")
+            raise
+            
+        try:
+            from system.hotkey_listener import HotkeyListener
+            self._hotkeys = HotkeyListener(self._config)
+            self._hotkeys.register("work_mode", self._hotkey_work_mode)
+            self._hotkeys.register("toggle_listen", self._hotkey_toggle_listen)
+            self._hotkeys.register("stop_speaking", self._hotkey_stop_speaking)
+        except Exception as e:
+            logger.error(f"Failed to initialize Hotkey Listener: {e}")
+            raise
+
+    def _hotkey_work_mode(self):
+        logger.info("Hotkey triggered: Work Mode")
+        self._current_command = "start work mode"
+        self._state = self.STATE_PROCESSING
+        if self._stt:
+            self._stt.stop()
+        if self._tts:
+            self._tts.stop()
+
+    def _hotkey_toggle_listen(self):
+        logger.info("Hotkey triggered: Toggle Listen")
+        if self._state == self.STATE_IDLE:
+            self._state = self.STATE_LISTENING
+            if self._tts:
+                self._tts.play_chime()
+            if self._stt:
+                self._stt.stop()
+        elif self._state == self.STATE_LISTENING:
+            self._state = self.STATE_IDLE
+            if self._stt:
+                self._stt.stop()
+
+    def _hotkey_stop_speaking(self):
+        logger.info("Hotkey triggered: Stop Speaking")
+        if self._tts:
+            self._tts.stop()
+
     def run(self) -> None:
         """
         Start the main assistant loop.
@@ -119,6 +164,10 @@ class AssistantLoop:
         """
         self._running = True
         logger.info(f"{self._assistant_name} is starting up...")
+
+        # Start background listeners
+        if hasattr(self, "_hotkeys"):
+            self._hotkeys.start()
 
         # Startup greeting
         self._tts.play_chime()
@@ -265,6 +314,14 @@ class AssistantLoop:
         results = []
         import time
 
+        # 1. Virtual Desktop
+        if workspace.get("create_virtual_desktop", False):
+            if self._desktop_manager.create_and_switch():
+                results.append("Created new virtual desktop.")
+            else:
+                results.append("Could not create virtual desktop.")
+
+        # 2. Launch Apps and Chrome Profiles
         for step in workspace.get("apps", []):
             step_type = step.get("type")
 
@@ -280,6 +337,18 @@ class AssistantLoop:
                 success, msg = self._browser.launch_profile(profile, urls or None)
                 results.append(msg)
                 time.sleep(1)
+
+        # 3. Play Music
+        music = workspace.get("music", {})
+        if music.get("enabled") and music.get("url"):
+            success, msg = self._browser.launch_profile(
+                music.get("profile", "default"), 
+                [music.get("url")]
+            )
+            if success:
+                results.append("Started music.")
+            else:
+                results.append("Failed to start music.")
 
         summary = f"Started {ws_name}. " + " ".join(results)
         logger.info(f"Workspace routine complete: {summary}")
@@ -319,6 +388,8 @@ class AssistantLoop:
                 pass
 
         # Clean up engines
+        if hasattr(self, "_hotkeys") and self._hotkeys:
+            self._hotkeys.stop()
         if self._stt:
             self._stt.shutdown()
         if self._tts:

@@ -27,14 +27,12 @@
         {
           "type": "chrome_profile",
           "profile": "shivam",
-          "urls": [
-            "https://youtu.be/wLoWd2KyUro?si=IflKRO7tJJSR2OLg"
-          ]
+          "urls": []
         }
       ],
       "music": {
-        "enabled": false,
-        "url": "",
+        "enabled": true,
+        "url": "https://youtu.be/wLoWd2KyUro?si=IflKRO7tJJSR2OLg",
         "profile": "shivam"
       }
     },
