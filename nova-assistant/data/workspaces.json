@@ -12,7 +12,12 @@
         {
           "type": "chrome_profile",
           "profile": "vedixapp",
-          "urls": ["https://vedixapp.com"]
+          "urls": [
+            "https://vedixapp.com",
+            "https://chat.google.com/app/home",
+            "https://docs.google.com/spreadsheets/d/1WdTvk2_dX12Hw-rt0MVPsuiVtdFxDO54WJSMi5SkwSM/edit?usp=sharing",
+            "https://console.firebase.google.com/project/vedix-prod/firestore/databases/default/data/~2Fmatches~2F19467899"
+          ]
         },
         {
           "type": "chrome_profile",
@@ -22,35 +27,35 @@
         {
           "type": "chrome_profile",
           "profile": "shivam",
-          "urls": ["https://youtube.com"]
+          "urls": ["https://youtube.com]
+          }
+        ],
+        "music": {
+          "enabled": true,
+          "url": "https://youtu.be/wLoWd2KyUro?si=IflKRO7tJJSR2OLg",
+          "profile": "shivam"
         }
-      ],
-      "music": {
-        "enabled": false,
-        "url": "",
-        "profile": "shivam"
-      }
-    },
-    "study": {
-      "name": "Study Mode",
-      "description": "ASU study setup",
-      "create_virtual_desktop": true,
-      "apps": [
-        {
-          "type": "chrome_profile",
-          "profile": "asu",
-          "urls": []
-        },
-        {
-          "type": "app",
-          "app": "cursor"
+      },
+      "study": {
+        "name": "Study Mode",
+        "description": "ASU study setup",
+        "create_virtual_desktop": true,
+        "apps": [
+          {
+            "type": "chrome_profile",
+            "profile": "asu",
+            "urls": []
+          },
+          {
+            "type": "app",
+            "app": "cursor"
+          }
+        ],
+        "music": {
+          "enabled": false,
+          "url": "",
+          "profile": "shivam"
         }
-      ],
-      "music": {
-        "enabled": false,
-        "url": "",
-        "profile": "shivam"
       }
     }
   }
-}
