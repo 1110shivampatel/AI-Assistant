@@ -106,6 +106,8 @@ class AppLauncher:
             elif Path(executable).suffix == ".exe" and Path(executable).is_absolute():
                 subprocess.Popen(
                     [executable],
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
                     creationflags=subprocess.DETACHED_PROCESS | subprocess.CREATE_NO_WINDOW,
                 )
             else:
@@ -113,6 +115,8 @@ class AppLauncher:
                 subprocess.Popen(
                     executable,
                     shell=True,
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
                     creationflags=subprocess.DETACHED_PROCESS | subprocess.CREATE_NO_WINDOW,
                 )
 

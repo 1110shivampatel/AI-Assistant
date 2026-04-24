@@ -70,6 +70,8 @@ class BrowserLauncher:
         try:
             subprocess.Popen(
                 cmd,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
                 creationflags=subprocess.DETACHED_PROCESS
                 | subprocess.CREATE_NO_WINDOW,
             )

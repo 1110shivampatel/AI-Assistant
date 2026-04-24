@@ -74,12 +74,15 @@ Intents:
 - chrome_search: The user wants to search the web (e.g. "search google for python docs", "look up the weather"). Extract the 'query'.
 - search_file: The user wants to find a file on their computer (e.g. "find my resume", "search for budget spreadsheet"). Extract the 'query'.
 - open_file: The user wants to open a specific file (e.g. "open report.pdf"). Extract the 'filename'.
-- start_work_mode: The user wants to start a work routine (e.g. "start work mode", "study mode"). Extract the 'workspace' name if specified, otherwise 'default'.
+- start_work_mode: The user EXPLICITLY says "start work mode", "work mode", "study mode", or "initiate work mode". Do NOT use this intent for vague or ambiguous commands.
 - sleep: The user wants you to stop listening and go back to sleep (e.g. "go to sleep", "sleep nova", "stop listening").
 - chat: The user is asking a conversational question or greeting you (e.g. "what time is it", "hello", "how are you"). Generate a brief, friendly 'message' in response.
 - unknown: You cannot understand the command or it requests dangerous/unsupported actions (like deleting files or shutting down the PC). Provide a 'message' explaining why.
 
-IMPORTANT: Your output MUST be valid JSON matching the provided schema. Do not wrap it in markdown code blocks.
+RULES:
+1. Your output MUST be valid JSON matching the provided schema. Do not wrap it in markdown code blocks.
+2. When in doubt, use 'chat' or 'unknown' — NEVER guess 'start_work_mode' or 'open_app' unless the user clearly asks for it.
+3. If the command sounds like background noise or gibberish, classify as 'unknown'.
 """
 
     def __init__(self, config: dict):
@@ -216,6 +219,9 @@ IMPORTANT: Your output MUST be valid JSON matching the provided schema. Do not w
             if "intent" not in intent:
                 intent["intent"] = "unknown"
                 intent["message"] = "The LLM didn't return a valid intent type."
+            
+            # Sanity check: prevent high-impact intents from LLM hallucination
+            intent = self._sanity_check_llm_intent(command, intent)
                 
             return intent
         except json.JSONDecodeError:
@@ -224,6 +230,36 @@ IMPORTANT: Your output MUST be valid JSON matching the provided schema. Do not w
                 "intent": "unknown", 
                 "message": "I had trouble parsing the response from my language model."
             }
+
+    def _sanity_check_llm_intent(self, command: str, intent: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Post-LLM validation for high-impact intents.
+        
+        Prevents the LLM from hallucinating destructive actions
+        when the user's words don't actually match.
+        """
+        cmd_lower = command.lower()
+        intent_type = intent.get("intent", "")
+        
+        # start_work_mode requires the user to actually say "work" or "study" or "mode"
+        if intent_type == "start_work_mode":
+            work_keywords = {"work", "study", "mode", "routine", "initiate", "workspace"}
+            if not any(kw in cmd_lower for kw in work_keywords):
+                logger.warning(
+                    f"LLM hallucinated start_work_mode for: '{command}' — downgrading to chat"
+                )
+                return {"intent": "chat", "message": "I'm not sure what you meant. Could you say that again?"}
+        
+        # open_app requires some form of "open" or "launch" or an app name
+        if intent_type == "open_app":
+            action_words = {"open", "launch", "start", "run"}
+            if not any(kw in cmd_lower for kw in action_words):
+                logger.warning(
+                    f"LLM hallucinated open_app for: '{command}' — downgrading to chat"
+                )
+                return {"intent": "chat", "message": "I'm not sure what you meant. Could you say that again?"}
+        
+        return intent
 
 
 if __name__ == "__main__":
