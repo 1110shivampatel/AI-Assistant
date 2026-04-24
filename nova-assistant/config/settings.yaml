@@ -1,0 +1,123 @@
+# ============================================================
+# Nova Assistant — Configuration
+# ============================================================
+
+assistant:
+  name: "Nova"
+  wake_phrase: "wake up nova"
+  # Minimum confidence for wake phrase detection (0.0 - 1.0)
+  wake_confidence: 0.6
+  # Seconds of silence before Nova stops listening for a command
+  command_timeout: 8
+  # Cooldown between commands (seconds) to prevent double-triggers
+  command_cooldown: 2
+
+# ----- Local LLM (Ollama) -----
+llm:
+  provider: "ollama"
+  base_url: "http://localhost:11434"
+  primary_model: "qwen2.5:3b-instruct"
+  fallback_model: "qwen2.5:1.5b-instruct"
+  # Max tokens for intent parsing (keep small for speed)
+  max_tokens: 256
+  temperature: 0.1
+  # Auto-unload model after N minutes of idle
+  keep_alive: "5m"
+
+# ----- Speech-to-Text -----
+stt:
+  engine: "faster-whisper"
+  model_size: "small"
+  device: "cuda"           # "cuda" for GPU, "cpu" for CPU-only
+  compute_type: "float16"  # "float16" for GPU, "int8" for CPU
+  language: "en"
+  # VAD filter to skip silence
+  vad_filter: true
+  # Beam size (lower = faster, higher = more accurate)
+  beam_size: 3
+
+# ----- Text-to-Speech -----
+tts:
+  engine: "piper"
+  # Piper voice model (will be downloaded on first run)
+  voice: "en_US-lessac-medium"
+  # Speech rate multiplier
+  rate: 1.0
+
+# ----- Chrome Profiles -----
+chrome:
+  executable: "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
+  profiles:
+    shivam:
+      directory: "Profile 2"
+      description: "Day-to-day tasks, searches, YouTube"
+    vedixapp:
+      directory: "Profile 19"
+      description: "Work profile for vedixapp.com"
+    personal:
+      directory: "Default"
+      description: "Professional email and accounts"
+    asu:
+      directory: "Profile 16"
+      description: "University email and accounts"
+
+# ----- Hotkeys -----
+hotkeys:
+  work_mode: "ctrl+shift+w"
+  toggle_listen: "ctrl+shift+n"
+  stop_speaking: "escape"
+
+# ----- Work Mode Routine -----
+work_mode:
+  # Require both hotkey AND voice phrase to trigger
+  require_voice_confirm: true
+  voice_trigger: "start work mode"
+  steps:
+    - action: "create_virtual_desktop"
+    - action: "launch_app"
+      app: "cursor"
+    - action: "launch_chrome_profile"
+      profile: "vedixapp"
+      urls:
+        - "https://vedixapp.com"
+    - action: "launch_chrome_profile"
+      profile: "personal"
+      urls: []
+    - action: "launch_chrome_profile"
+      profile: "shivam"
+      urls:
+        - "https://youtube.com"
+
+# ----- File Access (Safety) -----
+file_access:
+  # Only these root folders can be searched/opened
+  allowed_roots:
+    - "C:\\Users\\Shivam Patel\\Desktop"
+    - "C:\\Users\\Shivam Patel\\Documents"
+    - "C:\\Users\\Shivam Patel\\Downloads"
+  # Max search results to return
+  max_results: 20
+  # File extensions to index
+  index_extensions:
+    - ".pdf"
+    - ".docx"
+    - ".xlsx"
+    - ".pptx"
+    - ".txt"
+    - ".md"
+    - ".py"
+    - ".js"
+    - ".html"
+    - ".css"
+    - ".json"
+    - ".yaml"
+    - ".yml"
+    - ".jpg"
+    - ".png"
+
+# ----- Logging -----
+logging:
+  level: "INFO"
+  file: "logs/nova.log"
+  max_size_mb: 10
+  backup_count: 3

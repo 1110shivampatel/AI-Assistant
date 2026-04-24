@@ -1,0 +1,1 @@
+"""Nova Assistant — Tools module."""

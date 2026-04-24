@@ -1,0 +1,56 @@
+{
+  "workspaces": {
+    "default": {
+      "name": "Default Work Mode",
+      "description": "Standard work setup with Cursor and Chrome profiles",
+      "create_virtual_desktop": true,
+      "apps": [
+        {
+          "type": "app",
+          "app": "cursor"
+        },
+        {
+          "type": "chrome_profile",
+          "profile": "vedixapp",
+          "urls": ["https://vedixapp.com"]
+        },
+        {
+          "type": "chrome_profile",
+          "profile": "personal",
+          "urls": []
+        },
+        {
+          "type": "chrome_profile",
+          "profile": "shivam",
+          "urls": ["https://youtube.com"]
+        }
+      ],
+      "music": {
+        "enabled": false,
+        "url": "",
+        "profile": "shivam"
+      }
+    },
+    "study": {
+      "name": "Study Mode",
+      "description": "ASU study setup",
+      "create_virtual_desktop": true,
+      "apps": [
+        {
+          "type": "chrome_profile",
+          "profile": "asu",
+          "urls": []
+        },
+        {
+          "type": "app",
+          "app": "cursor"
+        }
+      ],
+      "music": {
+        "enabled": false,
+        "url": "",
+        "profile": "shivam"
+      }
+    }
+  }
+}

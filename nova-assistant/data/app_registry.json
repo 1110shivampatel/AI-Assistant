@@ -1,0 +1,49 @@
+{
+  "apps": {
+    "chrome": {
+      "name": "Google Chrome",
+      "executable": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+      "aliases": ["chrome", "google chrome", "browser", "google"]
+    },
+    "cursor": {
+      "name": "Cursor",
+      "executable": "C:\\Users\\Shivam Patel\\AppData\\Local\\Programs\\cursor\\Cursor.exe",
+      "aliases": ["cursor", "code editor", "editor", "ide"]
+    },
+    "explorer": {
+      "name": "File Explorer",
+      "executable": "explorer.exe",
+      "aliases": ["explorer", "file explorer", "files", "my computer", "this pc"]
+    },
+    "notepad": {
+      "name": "Notepad",
+      "executable": "notepad.exe",
+      "aliases": ["notepad", "text editor", "note"]
+    },
+    "calculator": {
+      "name": "Calculator",
+      "executable": "calc.exe",
+      "aliases": ["calculator", "calc", "calculate"]
+    },
+    "settings": {
+      "name": "Windows Settings",
+      "executable": "ms-settings:",
+      "aliases": ["settings", "windows settings", "system settings"]
+    },
+    "terminal": {
+      "name": "Windows Terminal",
+      "executable": "wt.exe",
+      "aliases": ["terminal", "command prompt", "powershell", "cmd", "shell"]
+    },
+    "spotify": {
+      "name": "Spotify",
+      "executable": "spotify.exe",
+      "aliases": ["spotify", "music", "songs"]
+    },
+    "task_manager": {
+      "name": "Task Manager",
+      "executable": "taskmgr.exe",
+      "aliases": ["task manager", "taskmgr", "processes"]
+    }
+  }
+}

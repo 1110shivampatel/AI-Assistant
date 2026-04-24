@@ -1,0 +1,1 @@
+"""Nova Assistant — Core module."""
